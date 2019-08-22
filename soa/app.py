@@ -11,7 +11,6 @@ DTH (data transport handler)
 '''
 
 import asyncio
-from inspect import getmodulename, stack, isawaitable
 import functools
 #from collections import defaultdict
 import logging
@@ -34,7 +33,7 @@ class Soa:
 
     def __init__(self, name=None, coin=True):
         if name is None:
-            name = getmodulename(stack()[1][1])
+            name = '[hello SOA]'
         if coin:
             container = web.Container()
         else:
@@ -42,8 +41,9 @@ class Soa:
         # debug
         if not container:
             raise exceptions.NotContainer(
-                    'Soa has no Container for your work, Maybe current version just provides '\
-                    'web container, so is your work real fit the current version ? Good lucky!'
+                    'Soa has no Container for your work! '
+                    'Maybe current version just provides '
+                    'web container, so is your work real fit the current version ? Good lucky !'
                 )
 
         self.name = name
@@ -52,6 +52,7 @@ class Soa:
         self.config = config
         self.loop = asyncio.get_event_loop()
         self.container.server = self
+
 
     def start(self):
         address = self.config.ADDRESS
