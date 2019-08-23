@@ -1,5 +1,5 @@
 '''
-DTH (data transport handler)
+soa.DTH (data transport handler)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     dth bases on python3.7's asyncio module, deal with data event loop.
@@ -10,10 +10,9 @@ DTH (data transport handler)
     and we can enjoy it with others, learning more, happy more.
 '''
 
-import asyncio
-import functools
-#from collections import defaultdict
-import logging
+from asyncio import Protocol, get_event_loop
+from functools import partial
+from logging import getLogger
 
 import config
 import log
@@ -48,15 +47,15 @@ class Soa:
 
         self.name = name
         self.container = container
-        self.logger = logging.getLogger('soa')
+        self.logger = getLogger('soa')
         self.config = config
-        self.loop = asyncio.get_event_loop()
+        self.loop = get_event_loop()
         self.container.server = self
 
 
     def start(self):
         address = self.config.ADDRESS
-        PDTH = functools.partial(DTH, self, self.logger)
+        PDTH = partial(DTH, self, self.logger)
         factory = self.loop.create_server(PDTH, *address)
         try:
             self.logger.info('Hello SOA ~')
@@ -69,7 +68,7 @@ class Soa:
             self.logger.info('SOA is stopped, GoodBye ~')
         
 
-class DTH(asyncio.Protocol):
+class DTH(Protocol):
     '''
         DTH: Data Transport Handler
         override methods from asyncio.Protocol, data_received,
@@ -96,7 +95,7 @@ class DTH(asyncio.Protocol):
 
     def connection_lost(self, exc):
         if exc:
-            self.logger.error('{}.{} disconnected err: exc {!r}.'.format(*self.client_addr, exc))
+            self.logger.error('{}.{} disconnected err: exc: {!r}.'.format(*self.client_addr, exc))
         self.logger.info('{}.{} disconnected.'.format(*self.client_addr))
         super().connection_lost(exc)
                 

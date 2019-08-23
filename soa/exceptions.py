@@ -16,6 +16,16 @@ class SoaException(Exception):
         super().__init__(message)
         self.code = code
 
+# container
 class NotContainer(SoaException):
     pass
 
+# Router
+class URIConflictsException(SoaException):
+    pass
+
+class RouterLostFuncException(SoaException):
+    pass
+
+class URINotRegistered(SoaException):
+    pass

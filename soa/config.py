@@ -10,6 +10,7 @@ import logging
 
 # base dir of user's project
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+STATIC_DIR = os.path.join(BASE_DIR, 'static')
 
 # debug
 DEBUG = True

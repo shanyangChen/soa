@@ -1,7 +1,7 @@
 # SOA
 
 ## Overview
- * To build up a python web server by simple (for fun).
+ * To build up a python server by simple (for fun).
 
  * Base on python3.7 and asynicio
 
