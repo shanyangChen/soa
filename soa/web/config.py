@@ -6,6 +6,8 @@ soa.web.config
 '''
 
 # middlewares for web request and response
-MIDDLEWARES = [
-        
-]
+REQ_MIDDLEWARES = []
+RES_MIDDLEWARES = []
+
+# keep-alive
+KEEP_ALIVE = 20 * 1000  # default 60s

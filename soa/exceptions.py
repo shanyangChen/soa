@@ -29,3 +29,7 @@ class RouterLostFuncException(SoaException):
 
 class URINotRegistered(SoaException):
     pass
+
+# Header
+class NotDictHeaders(SoaException):
+    pass

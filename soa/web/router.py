@@ -58,13 +58,11 @@ class Router:
 
     def get_func_by_uri(self, uri, method):
         # it will return 404 response for request
-        t = self.uri_funcs[uri]  
-        if t[0].issubset(method.upper()):
-            return t[1]
-        else:
-            raise URINotRegistered(
-                    'This uri for router is not registered.'   
-                )
+        if self.uri_funcs.get(uri):
+            t = self.uri_funcs[uri]  
+            if t[0].issubset(method.upper()):
+                return t[1]
+        return None
 
     def parser(self, original_uri):
         # maybe it will effective for soa.web framework, we will update it when it is necessary

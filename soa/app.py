@@ -66,6 +66,7 @@ class Soa:
             self.loop.run_until_complete(server.wait_closed())
             self.loop.close()
             self.logger.info('SOA is stopped, GoodBye ~')
+            quit()
         
 
 class DTH(Protocol):
@@ -84,7 +85,7 @@ class DTH(Protocol):
         self.client_addr = transport.get_extra_info('peername')
 
     def data_received(self, data):
-        response = self.server.container(data)
+        response = self.server.container(data, self.client_addr)
         self.transport.write(response)
 
         # debug

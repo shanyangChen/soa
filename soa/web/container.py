@@ -11,6 +11,7 @@ from soa.web import router
 from soa.web import request
 from soa.web import response
 from soa.web import config
+from soa.web import errhandler
 
 class Container():
 
@@ -24,12 +25,44 @@ class Container():
         self.router = router.Router()
         self.requester =  request.Requester
         self.responser = response.Responser
-        self.middleawres = config.MIDDLEWARES
+        self.req_middleawres = config.REQ_MIDDLEWARES
+        self.res_middleawres = config.RES_MIDDLEWARES
+        self.client_listeners = {}  # peername : request
 
-    def __call__(self, data):
+    def __call__(self, data, remote_addr):
         # hand it to request
-        request = self.requester(self.server, data)
-        return bytes('ok ! web received data from soa is {}'.format(data), 'utf-8')
+        ip, port = remote_addr
+        ra = ip + ':' + str(port)
+        if self.client_listeners.get(ra):
+            request = self.client_listeners[ra]
+        else:
+            request = self.requester(self.server, remote_addr)
+            self.client_listeners[ra] = request
+        # feed data for request
+        request.catch_data(data)
+
+        # handle request middlewares #
+        request = self.middlewares_handle(self.req_middleawres, request)
+
+        handler = self.router.get_func_by_uri(request.path, request.method)
+        if not handler:
+            # 404
+            err = errhandler.Error404()
+            request.set_headers({'Content-Type':'text/html;charset=utf-8'})
+            response = self.responser(err.translate(), False, host=request.host, headers=request.user_headers, keep_alive_time_rest=request.keep_alive_time_rest)
+        else:
+            result = handler(request)   # we hope that the handler will be run as a croutine later
+
+            # handle response middlewares #
+            result = self.middlewares_handle(self.res_middleawres, response)
+
+            response = self.responser(result, request.is_json, host=request.host, headers=request.user_headers, keep_alive_time_rest=request.keep_alive_time_rest)
+
+            # check keep_alive timeout
+            if self.check_kp_timeout(request):
+                del self.client_listeners[request.remote_addr]
+
+        return response.build_bytes()
 
     def route(self, uri, method=frozenset({'GET'})):
         '''
@@ -57,4 +90,14 @@ class Container():
     def put(self, uri, method=frozenset({'PUT'})):
         return self.route(uri, method)
     # remove trace/options/patch/delete/connection methods.
+
+    def middlewares_handle(self, middlewares, obj):
+        for ware in middlewares:
+            # It means that ware is the Class of middleware
+            obj = ware(obj)
+        return obj
+    
+    def check_kp_timeout(self, request):
+        return request.keep_alive_time_rest <= 0
+        
 
