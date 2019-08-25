@@ -20,23 +20,23 @@ Version
 
 Setup
 -----
-(Should I make a makefile?(^ .~))
 ``git clone https://github.com/wangsong19/soa``
 
-    ``cd soa``
-    ``python3 setup.py sdist``
+    cd soa
+    python3 setup.py sdist
     
-    ``cd soa/dist/``
-    ``tar xvzf SOA0.0.1-.tar.gz``
+    cd soa/dist/
+    tar xvzf SOA0.0.1-.tar.gz
 
-    ``cd SOA0.0.1-``
-    ``python3 setup.py install``
+    cd SOA0.0.1-
+    python3 setup.py install
 
-    ``rm -rf /dist``
+    rm -rf /dist``
 
 Simple test
 -----------
 .. code:: python
+
     @app.container.router('/')
     def hello(request):
         # set headers example
