@@ -9,16 +9,14 @@ soa.web.errhandler
 class ErrHandler:
 
     def __init__(self, code, status):
-        self.template = '''
-            <html>
-            <body>
-            {!r}
-            <hr>
-
-            <h5>SOA, a rest time framework. learning and by learning ( ~ .~)</h5>
-            </body>
-            </html>
-        '''
+        self.template = ''  \
+            '<html>'        \
+            '<body>'        \
+            '{!s}'          \
+            '<hr>'          \
+            '<h5>SOA, a rest time framework. learning and by learning ( ~ .~)</h5>' \
+            '</body>'       \
+            '</html>'
         self.code = code
         self.status = status
 
